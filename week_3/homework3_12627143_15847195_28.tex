@@ -1,0 +1,386 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% PREAMBLE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[11pt,a4paper]{article}
+
+% Taal en typografie
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[dutch]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% Wiskunde en tabellen
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+
+% Bomen en figuren
+\usepackage{graphicx}
+\usepackage{qtree}
+
+% Pagina-opmaak
+\usepackage[margin=2.5cm]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% Links
+\usepackage[hidelinks]{hyperref}
+
+% Kleine hulpfuncties voor consistente opmaak
+\newcommand{\nt}[1]{\ensuremath{\mathrm{#1}}}
+\newcommand{\lex}[1]{\textit{#1}}
+\newcommand{\ruleprob}[2]{\ensuremath{P(#1\rightarrow #2)}}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HEADING
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\rule{\textwidth}{1pt}
+\begin{center}
+  \textbf{Taaltheorie en Taalverwerking -- Homework Submission}
+\end{center}
+\rule{\textwidth}{0.5pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ENTER DETAILS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Week:} 3
+
+\textbf{Group:} 28
+
+\textbf{Student names and IDs:} Bob Engel 12627143, Dion Streefkerk 15847195
+
+\textbf{Date:} 4 mei, 2026
+
+\rule{\textwidth}{1pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% YOUR ANSWERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+
+%------------------------------------------------------------
+\item \textbf{CFG voor de drie CoreNLP-bomen}
+
+De vier parameters van de grammatica zijn $\langle \Sigma, N, \nt{S}, R\rangle$.
+
+\[
+\begin{aligned}
+\Sigma = \{&\text{the}, \text{a}, \text{architect}, \text{obtained}, \text{sketchbook}, \text{or}, \text{pencil}, \text{from}, \text{landlord},\\
+&\text{drew}, \text{sketch}, \text{of}, \text{house}, \text{and}, \text{garden}, \text{blueprint}, \text{museum}, \text{donation}\}.
+\end{aligned}
+\]
+
+\[
+N = \{\nt{S}, \nt{NP}, \nt{VP}, \nt{PP}, \nt{DT}, \nt{NN}, \nt{VBD}, \nt{IN}, \nt{CC}\}.
+\]
+
+Het startsymbool is $\nt{S}$.
+
+De regels $R$ zijn:
+
+\[
+\begin{array}{rcl}
+\nt{S} &\rightarrow& \nt{NP}\ \nt{VP} \\
+\nt{VP} &\rightarrow& \nt{VBD}\ \nt{NP} \mid \nt{VBD}\ \nt{NP}\ \nt{PP} \\
+\nt{NP} &\rightarrow& \nt{DT}\ \nt{NN} \mid \nt{NP}\ \nt{PP} \mid \nt{NP}\ \nt{CC}\ \nt{NP} \\
+\nt{PP} &\rightarrow& \nt{IN}\ \nt{NP} \\[1mm]
+\nt{DT} &\rightarrow& \text{the} \mid \text{a} \\
+\nt{NN} &\rightarrow& \text{architect} \mid \text{sketchbook} \mid \text{pencil} \mid \text{landlord} \mid \text{sketch} \mid \text{house} \\
+   &\mid& \text{garden} \mid \text{blueprint} \mid \text{museum} \mid \text{donation} \\
+\nt{VBD} &\rightarrow& \text{obtained} \mid \text{drew} \\
+\nt{IN} &\rightarrow& \text{from} \mid \text{of} \\
+\nt{CC} &\rightarrow& \text{or} \mid \text{and}.
+\end{array}
+\]
+
+Deze grammatica bevat precies de soorten regels die nodig zijn voor de drie gegeven CoreNLP-bomen. Zinnen bestaan uit een subject-$\nt{NP}$ en een $\nt{VP}$. Een $\nt{VP}$ kan met of zonder $\nt{PP}$ voorkomen. Een $\nt{NP}$ kan een $\nt{PP}$ krijgen, en twee $\nt{NP}$'s kunnen met \lex{or} of \lex{and} gecoördineerd worden.
+
+%------------------------------------------------------------
+\item \textbf{Ambiguïteit volgens deze CFG}
+
+Een zin is syntactisch ambigu als dezelfde zin volgens dezelfde grammatica meer dan één parse tree kan krijgen. Volgens de CFG uit vraag 1 zijn alle drie de zinnen ambigu.
+
+\begin{enumerate}
+  \item \lex{the architect obtained a sketchbook or a pencil from the landlord}
+
+  Deze zin heeft volgens de CFG \textbf{3 mogelijke parse trees}. De ambiguïteit zit in de $\nt{PP}$ \lex{from the landlord} en in de structuur van de coördinatie met \lex{or}.
+
+  De drie mogelijkheden zijn:
+  \begin{enumerate}
+    \item De $\nt{PP}$ hoort bij de hele $\nt{VP}$:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ \lex{a sketchbook or a pencil}]\ [\nt{PP}\ \lex{from the landlord}]].
+    \]
+
+    \item De $\nt{PP}$ hoort bij de hele object-$\nt{NP}$:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ [\nt{NP}\ \lex{a sketchbook or a pencil}]\ [\nt{PP}\ \lex{from the landlord}]]].
+    \]
+
+    \item De $\nt{PP}$ hoort alleen bij de tweede $\nt{NP}$:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ [\nt{NP}\ \lex{a sketchbook}]\ \lex{or}\ [\nt{NP}\ \lex{a pencil from the landlord}]]].
+    \]
+  \end{enumerate}
+
+  Dit is dus zowel \nt{PP}-attachment ambiguity als coördinatie-/scope-ambiguïteit.
+
+  \item \lex{the architect drew a sketch of a house and a garden}
+
+  Deze zin heeft volgens de CFG \textbf{3 mogelijke parse trees}. De ambiguïteit zit in de $\nt{PP}$ \lex{of a house and a garden} en in de coördinatie met \lex{and}.
+
+  De drie mogelijkheden zijn:
+  \begin{enumerate}
+    \item De $\nt{PP}$ hoort bij de $\nt{VP}$:
+    \[
+    [\nt{VP}\ \lex{drew}\ [\nt{NP}\ \lex{a sketch}]\ [\nt{PP}\ \lex{of a house and a garden}]].
+    \]
+
+    \item De $\nt{PP}$ hoort bij de $\nt{NP}$ \lex{a sketch}:
+    \[
+    [\nt{VP}\ \lex{drew}\ [\nt{NP}\ [\nt{NP}\ \lex{a sketch}]\ [\nt{PP}\ \lex{of a house and a garden}]]].
+    \]
+
+    \item De coördinatie zit hoger:
+    \[
+    [\nt{VP}\ \lex{drew}\ [\nt{NP}\ [\nt{NP}\ \lex{a sketch of a house}]\ \lex{and}\ [\nt{NP}\ \lex{a garden}]]].
+    \]
+  \end{enumerate}
+
+  Dit is dus \nt{PP}-attachment ambiguity en coördinatie-/scope-ambiguïteit.
+
+  \item \lex{the architect obtained the blueprint of the museum and a donation}
+
+  Deze zin heeft volgens de CFG \textbf{3 mogelijke parse trees}. De ambiguïteit zit in de $\nt{PP}$ \lex{of the museum} en in de coördinatie met \lex{and}.
+
+  De drie mogelijkheden zijn:
+  \begin{enumerate}
+    \item CoreNLP-achtige lezing:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ [\nt{NP}\ \lex{the blueprint}]\ [\nt{PP}\ \lex{of the museum and a donation}]]].
+    \]
+
+    \item Meest plausibele lezing:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ [\nt{NP}\ \lex{the blueprint of the museum}]\ \lex{and}\ [\nt{NP}\ \lex{a donation}]]].
+    \]
+
+    \item De $\nt{PP}$ hoort bij de $\nt{VP}$:
+    \[
+    [\nt{VP}\ \lex{obtained}\ [\nt{NP}\ \lex{the blueprint}]\ [\nt{PP}\ \lex{of the museum and a donation}]].
+    \]
+  \end{enumerate}
+
+  Dit is dus \nt{PP}-attachment ambiguity en coördinatie-/scope-ambiguïteit.
+\end{enumerate}
+
+%------------------------------------------------------------
+\item \textbf{Correcte bomen volgens de meest plausibele betekenis}
+
+\textbf{Zin 1.} De meest plausibele structuur is dat \lex{from the landlord} bij het verkrijgen hoort, en dat \lex{a sketchbook or a pencil} samen het object is.
+
+\begin{center}
+\resizebox{0.98\textwidth}{!}{%
+\Tree [.\nt{S}
+        [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} architect ] ]
+        [.\nt{VP} [.\nt{VBD} obtained ]
+             [.\nt{NP} [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} sketchbook ] ]
+                  [.\nt{CC} or ]
+                  [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} pencil ] ] ]
+             [.\nt{PP} [.\nt{IN} from ]
+                  [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} landlord ] ] ] ] ]
+}
+\end{center}
+
+\textbf{Zin 2.} De meest plausibele structuur is dat \lex{of a house and a garden} bij \lex{a sketch} hoort.
+
+\begin{center}
+\resizebox{0.98\textwidth}{!}{%
+\Tree [.\nt{S}
+        [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} architect ] ]
+        [.\nt{VP} [.\nt{VBD} drew ]
+             [.\nt{NP} [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} sketch ] ]
+                  [.\nt{PP} [.\nt{IN} of ]
+                       [.\nt{NP} [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} house ] ]
+                            [.\nt{CC} and ]
+                            [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} garden ] ] ] ] ] ] ]
+}
+\end{center}
+
+\textbf{Zin 3.} De meest plausibele structuur is dat de architect twee dingen verkreeg: \lex{the blueprint of the museum} en \lex{a donation}.
+
+\begin{center}
+\resizebox{0.98\textwidth}{!}{%
+\Tree [.\nt{S}
+        [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} architect ] ]
+        [.\nt{VP} [.\nt{VBD} obtained ]
+             [.\nt{NP} [.\nt{NP} [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} blueprint ] ]
+                       [.\nt{PP} [.\nt{IN} of ]
+                            [.\nt{NP} [.\nt{DT} the ] [.\nt{NN} museum ] ] ] ]
+                  [.\nt{CC} and ]
+                  [.\nt{NP} [.\nt{DT} a ] [.\nt{NN} donation ] ] ] ] ]
+}
+\end{center}
+
+%------------------------------------------------------------
+\item \textbf{PCFG op basis van de correcte treebank uit vraag 3}
+
+De correcte treebank bestaat uit de drie bomen uit vraag 3. De kans van een regel wordt geschat met relatieve frequentie:
+\[
+P(A\rightarrow \beta)=\frac{\#(A\rightarrow \beta)}{\#(A)}.
+\]
+Hier is $\#(A)$ het totale aantal regels in de treebank met linkerkant $A$.
+
+\begin{center}
+\small
+\begin{longtable}{llll}
+\toprule
+Regel & Telling regel & Telling linkerkant & Kans \\
+\midrule
+\endhead
+$\nt{S}\rightarrow \nt{NP}\ \nt{VP}$ & 3 & 3 & $1$ \\
+$\nt{VP}\rightarrow \nt{VBD}\ \nt{NP}$ & 2 & 3 & $\frac{2}{3}$ \\
+$\nt{VP}\rightarrow \nt{VBD}\ \nt{NP}\ \nt{PP}$ & 1 & 3 & $\frac{1}{3}$ \\
+$\nt{NP}\rightarrow \nt{DT}\ \nt{NN}$ & 12 & 17 & $\frac{12}{17}$ \\
+$\nt{NP}\rightarrow \nt{NP}\ \nt{PP}$ & 2 & 17 & $\frac{2}{17}$ \\
+$\nt{NP}\rightarrow \nt{NP}\ \nt{CC}\ \nt{NP}$ & 3 & 17 & $\frac{3}{17}$ \\
+$\nt{PP}\rightarrow \nt{IN}\ \nt{NP}$ & 3 & 3 & $1$ \\
+\midrule
+$\nt{DT}\rightarrow \text{the}$ & 6 & 12 & $\frac{1}{2}$ \\
+$\nt{DT}\rightarrow \text{a}$ & 6 & 12 & $\frac{1}{2}$ \\
+$\nt{NN}\rightarrow \text{architect}$ & 3 & 12 & $\frac{1}{4}$ \\
+$\nt{NN}\rightarrow \text{sketchbook}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{pencil}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{landlord}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{sketch}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{house}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{garden}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{blueprint}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{museum}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{NN}\rightarrow \text{donation}$ & 1 & 12 & $\frac{1}{12}$ \\
+$\nt{VBD}\rightarrow \text{obtained}$ & 2 & 3 & $\frac{2}{3}$ \\
+$\nt{VBD}\rightarrow \text{drew}$ & 1 & 3 & $\frac{1}{3}$ \\
+$\nt{IN}\rightarrow \text{from}$ & 1 & 3 & $\frac{1}{3}$ \\
+$\nt{IN}\rightarrow \text{of}$ & 2 & 3 & $\frac{2}{3}$ \\
+$\nt{CC}\rightarrow \text{or}$ & 1 & 3 & $\frac{1}{3}$ \\
+$\nt{CC}\rightarrow \text{and}$ & 2 & 3 & $\frac{2}{3}$ \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+Controle van de belangrijkste tellingen:
+\begin{itemize}
+  \item $\nt{VP}$ komt 3 keer voor: 2 keer als $\nt{VP}\rightarrow \nt{VBD}\ \nt{NP}$ en 1 keer als $\nt{VP}\rightarrow \nt{VBD}\ \nt{NP}\ \nt{PP}$.
+  \item $\nt{NP}$ komt 17 keer voor: 12 keer als $\nt{NP}\rightarrow \nt{DT}\ \nt{NN}$, 2 keer als $\nt{NP}\rightarrow \nt{NP}\ \nt{PP}$, en 3 keer als $\nt{NP}\rightarrow \nt{NP}\ \nt{CC}\ \nt{NP}$.
+  \item $\nt{PP}$ komt 3 keer voor, steeds als $\nt{PP}\rightarrow \nt{IN}\ \nt{NP}$.
+\end{itemize}
+
+%------------------------------------------------------------
+\item \textbf{Kans van de CoreNLP-boom en de correcte boom voor zin 1}
+
+De kans van een parse tree is het product van de kansen van alle regels die in die boom gebruikt worden.
+
+Voor de CoreNLP-boom van zin 1 wordt de $\nt{PP}$ \lex{from the landlord} binnen de rechter conjunct-$\nt{NP}$ geplaatst:
+\[
+\lex{a sketchbook or [a pencil from the landlord]}.
+\]
+
+\[
+\begin{aligned}
+P(T_{\text{CoreNLP}})
+&=1\cdot \left(\frac{12}{17}\right)^4\cdot \left(\frac{1}{2}\right)^4
+\cdot \frac{1}{4}\cdot \left(\frac{1}{12}\right)^3\\
+&\quad \cdot \frac{2}{3}\cdot \frac{2}{3}\cdot \frac{3}{17}\cdot \frac{1}{3}
+\cdot \frac{2}{17}\cdot 1\cdot \frac{1}{3}\\
+&=\frac{1}{434476242}\\
+&\approx 0.000000002302.
+\end{aligned}
+\]
+
+Voor de correcte boom van zin 1 hoort de $\nt{PP}$ \lex{from the landlord} bij de $\nt{VP}$, en is \lex{a sketchbook or a pencil} samen het object.
+
+\[
+\begin{aligned}
+P(T_{\text{correct}})
+&=1\cdot \left(\frac{12}{17}\right)^4\cdot \left(\frac{1}{2}\right)^4
+\cdot \frac{1}{4}\cdot \left(\frac{1}{12}\right)^3\\
+&\quad \cdot \frac{1}{3}\cdot \frac{2}{3}\cdot \frac{3}{17}\cdot \frac{1}{3}
+\cdot 1\cdot \frac{1}{3}\\
+&=\frac{1}{102229704}\\
+&\approx 0.000000009782.
+\end{aligned}
+\]
+
+De kansen zijn dus verschillend. De correcte boom heeft een hogere kans dan de CoreNLP-boom:
+\[
+P(T_{\text{correct}}) > P(T_{\text{CoreNLP}}).
+\]
+De correcte boom is ongeveer $4.25$ keer zo waarschijnlijk volgens deze PCFG.
+
+%------------------------------------------------------------
+\item \textbf{Evaluatie van CoreNLP tegenover de gold standard}
+
+Ik gebruik labeled constituent evaluation. Dat betekent dat een constituent alleen correct telt als zowel het label als de woordspan hetzelfde zijn. Ik tel hier alleen constituent-nodes met labels $\nt{S}$, $\nt{NP}$, $\nt{VP}$ en $\nt{PP}$. Ik tel de woorden zelf en de PoS-labels $\nt{DT}$, $\nt{NN}$, $\nt{VBD}$, $\nt{IN}$ en $\nt{CC}$ niet mee. De root-node $\nt{S}$ tel ik dus wel mee als constituent.
+
+De formules zijn:
+\[
+\begin{aligned}
+\text{Precision}
+&=\frac{\#\text{correcte CoreNLP-constituents}}{\#\text{CoreNLP-constituents}},\\
+\text{Recall}
+&=\frac{\#\text{correcte CoreNLP-constituents}}{\#\text{gold-standard constituents}}.
+\end{aligned}
+\]
+
+\[
+F_1 = \frac{2\cdot \text{Precision}\cdot \text{Recall}}{\text{Precision}+\text{Recall}}.
+\]
+
+\begin{center}
+\small
+\begin{tabular}{lllllll}
+\toprule
+Zin & CoreNLP & Gold & Correct & Precision & Recall & $F_1$ \\
+\midrule
+1 & 9 & 8 & 7 & $\frac{7}{9}\approx 0.778$ & $\frac{7}{8}=0.875$ & $\frac{14}{17}\approx 0.824$ \\
+2 & 8 & 9 & 8 & $\frac{8}{8}=1.000$ & $\frac{8}{9}\approx 0.889$ & $\frac{16}{17}\approx 0.941$ \\
+3 & 9 & 9 & 7 & $\frac{7}{9}\approx 0.778$ & $\frac{7}{9}\approx 0.778$ & $\frac{7}{9}\approx 0.778$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Uitwerking per zin:
+\begin{enumerate}
+  \item Zin 1: CoreNLP heeft 9 constituents, de gold standard heeft 8 constituents, en 7 daarvan komen overeen. Dus:
+  \[
+  P=\frac{7}{9},\qquad R=\frac{7}{8},\qquad F_1=\frac{2\cdot 7}{9+8}=\frac{14}{17}.
+  \]
+
+  \item Zin 2: CoreNLP heeft 8 constituents, de gold standard heeft 9 constituents, en 8 daarvan komen overeen. Dus:
+  \[
+  P=\frac{8}{8}=1,
+  \qquad R=\frac{8}{9},
+  \qquad F_1=\frac{2\cdot 8}{8+9}=\frac{16}{17}.
+  \]
+
+  \item Zin 3: CoreNLP heeft 9 constituents, de gold standard heeft 9 constituents, en 7 daarvan komen overeen. Dus:
+  \[
+  P=\frac{7}{9},\qquad R=\frac{7}{9},\qquad F_1=\frac{2\cdot 7}{9+9}=\frac{7}{9}.
+  \]
+\end{enumerate}
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% END
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}

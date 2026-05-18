@@ -1,0 +1,689 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[dutch]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{forest}
+\usepackage{geometry}
+
+\geometry{
+  a4paper,
+  textwidth=15cm,
+  centering,
+  top=2.5cm,
+  bottom=3cm
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+
+\newcommand{\sem}[1]{\mathrm{Sem}(#1)}
+\newcommand{\app}{\mathbin{@}}
+\newcommand{\lam}[1]{\lambda #1.\,}
+
+\title{Homework 4}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Exercise 1}
+
+We gebruiken de constanten:
+\[
+s = \text{Stu}, \qquad j = \text{Joey}, \qquad m = \text{Michael}.
+\]
+
+Verder gebruiken we de volgende predicaten:
+\[
+\begin{array}{ll}
+Person(x) & x \text{ is een persoon},\\
+Butterfly(x) & x \text{ is een vlinder},\\
+Love(x,y) & x \text{ houdt van } y,\\
+Like(x,y) & x \text{ vindt } y \text{ leuk},\\
+Greet(x,y) & x \text{ groet } y,\\
+Cough(x) & x \text{ hoest},\\
+Sneeze(x) & x \text{ niest},\\
+Swim(x) & x \text{ zwemt}.
+\end{array}
+\]
+
+\subsection*{(a) Stu loves a butterfly who loves him}
+
+Er is een vlinder waar Stu van houdt, en die vlinder houdt ook van Stu.
+
+\[
+\exists x\bigl(Butterfly(x) \land Love(s,x) \land Love(x,s)\bigr)
+\]
+
+\subsection*{(b) Stu likes somebody and somebody likes Joey}
+
+Er bestaat een persoon die Stu leuk vindt, en er bestaat een persoon die Joey leuk vindt.
+
+\[
+\exists x\bigl(Person(x) \land Like(s,x)\bigr)
+\land
+\exists y\bigl(Person(y) \land Like(y,j)\bigr)
+\]
+
+\subsection*{(c) Nobody greets Michael}
+
+Er bestaat geen persoon die Michael groet.
+
+\[
+\neg \exists x\bigl(Person(x) \land Greet(x,m)\bigr)
+\]
+
+Equivalent:
+
+\[
+\forall x\bigl(Person(x) \rightarrow \neg Greet(x,m)\bigr)
+\]
+
+\subsection*{(d) Nobody coughs or sneezes}
+
+Geen enkel persoon hoest of niest.
+
+\[
+\neg \exists x\bigl(Person(x) \land (Cough(x) \lor Sneeze(x))\bigr)
+\]
+
+Equivalent:
+
+\[
+\forall x\bigl(Person(x) \rightarrow (\neg Cough(x) \land \neg Sneeze(x))\bigr)
+\]
+
+\subsection*{(e) Somebody coughs and sneezes}
+
+Er bestaat een persoon die zowel hoest als niest.
+
+\[
+\exists x\bigl(Person(x) \land Cough(x) \land Sneeze(x)\bigr)
+\]
+
+\subsection*{(f) Only one butterfly swims}
+
+Er is precies \'{e}\'{e}n vlinder die zwemt.
+
+\[
+\exists x\Bigl(
+Butterfly(x)
+\land Swim(x)
+\land
+\forall y\bigl((Butterfly(y) \land Swim(y)) \rightarrow y=x\bigr)
+\Bigr)
+\]
+
+Hier wordt ``only one'' vertaald met kwantoren en gelijkheid, niet met een apart predicaat.
+
+\newpage
+
+\section*{Exercise 2}
+
+We gebruiken neo-Davidsonian event representations.
+
+Predicaten:
+
+\[
+\begin{array}{ll}
+Making(e) & e \text{ is een maak-event},\\
+Seeing(e) & e \text{ is een zie-event},\\
+Coffee(x) & x \text{ is een koffie},\\
+ShootingStar(y) & y \text{ is een vallende ster},\\
+Agent(a,e) & a \text{ is de agent van event } e,\\
+Result(x,e) & x \text{ is het resultaat van event } e,\\
+Experiencer(b,e) & b \text{ is de ervaarder van event } e,\\
+Theme(y,e) & y \text{ is het thema van event } e,\\
+Start(t,e) & t \text{ is het beginpunt van event } e,\\
+End(t,e) & t \text{ is het eindpunt van event } e.
+\end{array}
+\]
+
+Verder betekent:
+\[
+t_1 \prec t_2
+\]
+dat tijdstip \(t_1\) v\'{o}\'{o}r tijdstip \(t_2\) komt.
+
+We gebruiken:
+\[
+alice = \text{Alice}, \qquad bob = \text{Bob}.
+\]
+
+\subsection*{1. When Alice made a coffee, Bob had already seen a shooting-star}
+
+De zin bevat twee events:
+
+\begin{enumerate}
+    \item Alice maakt een koffie.
+    \item Bob ziet een vallende ster.
+\end{enumerate}
+
+Omdat Bob de vallende ster \emph{already} had gezien, is het zien klaar v\'{o}\'{o}rdat het maken van de koffie begint.
+
+\[
+\begin{aligned}
+\exists e_1 \exists e_2 \exists x \exists y \exists t_1 \exists t_2 \exists t_3 \exists t_4
+\bigl[
+&Coffee(x)
+\land ShootingStar(y)\\
+&\land Making(e_1)
+\land Agent(alice,e_1)
+\land Result(x,e_1)\\
+&\land Seeing(e_2)
+\land Experiencer(bob,e_2)
+\land Theme(y,e_2)\\
+&\land Start(t_1,e_1)
+\land End(t_2,e_1)
+\land Start(t_3,e_2)
+\land End(t_4,e_2)\\
+&\land t_4 \prec t_1
+\bigr]
+\end{aligned}
+\]
+
+Hier betekent \(t_4 \prec t_1\): het zien van de vallende ster was klaar v\'{o}\'{o}rdat Alice begon met koffie maken.
+
+\subsection*{2. After Alice made a coffee, Bob saw a shooting-star}
+
+Eerst maakt Alice een koffie. Daarna ziet Bob een vallende ster.
+
+\[
+\begin{aligned}
+\exists e_1 \exists e_2 \exists x \exists y \exists t_1 \exists t_2 \exists t_3 \exists t_4
+\bigl[
+&Coffee(x)
+\land ShootingStar(y)\\
+&\land Making(e_1)
+\land Agent(alice,e_1)
+\land Result(x,e_1)\\
+&\land Seeing(e_2)
+\land Experiencer(bob,e_2)
+\land Theme(y,e_2)\\
+&\land Start(t_1,e_1)
+\land End(t_2,e_1)
+\land Start(t_3,e_2)
+\land End(t_4,e_2)\\
+&\land t_2 \prec t_3
+\bigr]
+\end{aligned}
+\]
+
+Hier betekent \(t_2 \prec t_3\): het koffie-maken was klaar v\'{o}\'{o}rdat Bob de vallende ster zag.
+
+\newpage
+
+\section*{Exercise 3a}
+
+De gegeven grammatica is:
+
+\[
+\begin{array}{lll}
+S &\rightarrow& NP\ VP\\
+NP &\rightarrow& D\ N\\
+NP &\rightarrow& PN\\
+VP &\rightarrow& V\ NP\\
+D &\rightarrow& a \mid all\\
+N &\rightarrow& song \mid musicians\\
+PN &\rightarrow& John\\
+V &\rightarrow& plays \mid love
+\end{array}
+\]
+
+We breiden deze grammatica uit met semantic attachments.
+
+\subsection*{Syntactische regels}
+
+\[
+\begin{array}{lll}
+S \rightarrow NP\ VP
+&\qquad&
+\sem{S}=\sem{NP}\app\sem{VP}\\[0.8em]
+NP \rightarrow D\ N
+&\qquad&
+\sem{NP}=\sem{D}\app\sem{N}\\[0.8em]
+NP \rightarrow PN
+&\qquad&
+\sem{NP}=\sem{PN}\\[0.8em]
+VP \rightarrow V\ NP
+&\qquad&
+\sem{VP}=\sem{V}\app\sem{NP}
+\end{array}
+\]
+
+\subsection*{Lexicale regels}
+
+\[
+\begin{array}{lll}
+D \rightarrow a
+&\qquad&
+\sem{D}=\lam{P}\lam{Q}\exists x(P\app x \land Q\app x)\\[0.8em]
+D \rightarrow all
+&\qquad&
+\sem{D}=\lam{P}\lam{Q}\forall x(P\app x \rightarrow Q\app x)\\[0.8em]
+N \rightarrow song
+&\qquad&
+\sem{N}=\lam{x}Song(x)\\[0.8em]
+N \rightarrow musicians
+&\qquad&
+\sem{N}=\lam{x}Musician(x)\\[0.8em]
+PN \rightarrow John
+&\qquad&
+\sem{PN}=\lam{Q}(Q\app j)\\[0.8em]
+V \rightarrow plays
+&\qquad&
+\sem{V}=\lam{O}\lam{z}O\app(\lam{y}Play(z,y))\\[0.8em]
+V \rightarrow love
+&\qquad&
+\sem{V}=\lam{O}\lam{z}O\app(\lam{y}Love(z,y))
+\end{array}
+\]
+
+\newpage
+
+\section*{Exercise 3b.1}
+
+\subsection*{Sentence: John plays a song}
+
+De logische representatie is:
+
+\[
+\exists x\bigl(Song(x) \land Play(j,x)\bigr)
+\]
+
+\subsection*{Parse tree}
+
+\begin{center}
+\begin{forest}
+for tree={
+    draw,
+    rounded corners,
+    align=center,
+    l sep=12mm,
+    s sep=8mm
+}
+[(8) S
+    [(2) NP
+        [(1) PN\\John]
+    ]
+    [(7) VP
+        [(3) V\\plays]
+        [(6) NP
+            [(4) D\\a]
+            [(5) N\\song]
+        ]
+    ]
+]
+\end{forest}
+\end{center}
+
+\subsection*{Semantische opbouw}
+
+\subsubsection*{(1) PN: John}
+\[\lam{Q}(Q\app j)\]
+
+\subsubsection*{(2) NP: John}
+\[\lam{Q}(Q\app j)\]
+
+\subsubsection*{(3) V: plays}
+\[\lam{O}\lam{z}O\app(\lam{y}Play(z,y))\]
+
+\subsubsection*{(4) D: a}
+\[\lam{P}\lam{Q}\exists x(P\app x \land Q\app x)\]
+
+\subsubsection*{(5) N: song}
+\[\lam{w}Song(w)\]
+
+\subsubsection*{(6) NP: a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{P}\lam{Q}\exists x(P\app x \land Q\app x))
+\app
+(\lam{w}Song(w))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\lam{Q}\exists x((\lam{w}Song(w))\app x \land Q\app x)
+\]
+\[
+\lam{Q}\exists x(Song(x) \land Q\app x)
+\]
+
+Dus:
+\[
+\sem{a\ song}=\lam{Q}\exists x(Song(x) \land Q\app x)
+\]
+
+\subsubsection*{(7) VP: plays a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{O}\lam{z}O\app(\lam{y}Play(z,y)))
+\app
+(\lam{Q}\exists x(Song(x) \land Q\app x))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\lam{z}(\lam{Q}\exists x(Song(x) \land Q\app x))
+\app
+(\lam{y}Play(z,y))
+\]
+\[
+\lam{z}\exists x(Song(x) \land (\lam{y}Play(z,y))\app x)
+\]
+\[
+\lam{z}\exists x(Song(x) \land Play(z,x))
+\]
+
+Dus:
+\[
+\sem{plays\ a\ song}=\lam{z}\exists x(Song(x) \land Play(z,x))
+\]
+
+\subsubsection*{(8) S: John plays a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{Q}(Q\app j))
+\app
+(\lam{z}\exists x(Song(x) \land Play(z,x)))
+\]
+
+Na \(\beta\)-conversie:
+\[
+(\lam{z}\exists x(Song(x) \land Play(z,x)))\app j
+\]
+\[
+\exists x(Song(x) \land Play(j,x))
+\]
+
+Eindantwoord:
+\[
+\boxed{\exists x(Song(x) \land Play(j,x))}
+\]
+
+\newpage
+
+\section*{Exercise 3b.2}
+
+\subsection*{Sentence: All musicians love a song}
+
+De compositional semantics van deze grammatica geeft de volgende lezing:
+
+\[
+\forall x\bigl(Musician(x) \rightarrow \exists y(Song(y) \land Love(x,y))\bigr)
+\]
+
+Betekenis: iedere muzikant houdt van minstens \'{e}\'{e}n liedje. Het liedje mag per muzikant verschillen.
+
+\subsection*{Parse tree}
+
+\begin{center}
+\begin{forest}
+for tree={
+    draw,
+    rounded corners,
+    align=center,
+    l sep=12mm,
+    s sep=8mm
+}
+[(9) S
+    [(3) NP
+        [(1) D\\all]
+        [(2) N\\musicians]
+    ]
+    [(8) VP
+        [(4) V\\love]
+        [(7) NP
+            [(5) D\\a]
+            [(6) N\\song]
+        ]
+    ]
+]
+\end{forest}
+\end{center}
+
+\subsection*{Semantische opbouw}
+
+\subsubsection*{(1) D: all}
+\[\lam{P}\lam{Q}\forall x(P\app x \rightarrow Q\app x)\]
+
+\subsubsection*{(2) N: musicians}
+\[\lam{u}Musician(u)\]
+
+\subsubsection*{(3) NP: all musicians}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{P}\lam{Q}\forall x(P\app x \rightarrow Q\app x))
+\app
+(\lam{u}Musician(u))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\lam{Q}\forall x((\lam{u}Musician(u))\app x \rightarrow Q\app x)
+\]
+\[
+\lam{Q}\forall x(Musician(x) \rightarrow Q\app x)
+\]
+
+Dus:
+\[
+\sem{all\ musicians}=\lam{Q}\forall x(Musician(x) \rightarrow Q\app x)
+\]
+
+\subsubsection*{(4) V: love}
+\[\lam{O}\lam{z}O\app(\lam{y}Love(z,y))\]
+
+\subsubsection*{(5) D: a}
+\[\lam{P}\lam{Q}\exists y(P\app y \land Q\app y)\]
+
+\subsubsection*{(6) N: song}
+\[\lam{w}Song(w)\]
+
+\subsubsection*{(7) NP: a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{P}\lam{Q}\exists y(P\app y \land Q\app y))
+\app
+(\lam{w}Song(w))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\lam{Q}\exists y((\lam{w}Song(w))\app y \land Q\app y)
+\]
+\[
+\lam{Q}\exists y(Song(y) \land Q\app y)
+\]
+
+Dus:
+\[
+\sem{a\ song}=\lam{Q}\exists y(Song(y) \land Q\app y)
+\]
+
+\subsubsection*{(8) VP: love a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{O}\lam{z}O\app(\lam{y}Love(z,y)))
+\app
+(\lam{Q}\exists y(Song(y) \land Q\app y))
+\]
+
+Om variabelenverwarring te vermijden, hernoemen we de gebonden variabele \(y\) in de object-NP naar \(v\):
+\[
+\lam{Q}\exists v(Song(v) \land Q\app v)
+\]
+
+Dan krijgen we:
+\[
+(\lam{O}\lam{z}O\app(\lam{y}Love(z,y)))
+\app
+(\lam{Q}\exists v(Song(v) \land Q\app v))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\lam{z}(\lam{Q}\exists v(Song(v) \land Q\app v))
+\app
+(\lam{y}Love(z,y))
+\]
+\[
+\lam{z}\exists v(Song(v) \land (\lam{y}Love(z,y))\app v)
+\]
+\[
+\lam{z}\exists v(Song(v) \land Love(z,v))
+\]
+
+Dus:
+\[
+\sem{love\ a\ song}=\lam{z}\exists v(Song(v) \land Love(z,v))
+\]
+
+\subsubsection*{(9) S: All musicians love a song}
+
+Voor \(\beta\)-conversie:
+\[
+(\lam{Q}\forall x(Musician(x) \rightarrow Q\app x))
+\app
+(\lam{z}\exists v(Song(v) \land Love(z,v)))
+\]
+
+Na \(\beta\)-conversie:
+\[
+\forall x\bigl(Musician(x) \rightarrow (\lam{z}\exists v(Song(v) \land Love(z,v)))\app x\bigr)
+\]
+\[
+\forall x\bigl(Musician(x) \rightarrow \exists v(Song(v) \land Love(x,v))\bigr)
+\]
+
+Eindantwoord:
+\[
+\boxed{\forall x\bigl(Musician(x) \rightarrow \exists v(Song(v) \land Love(x,v))\bigr)}
+\]
+
+\newpage
+
+\section*{Exercise 4}
+
+We bekijken opnieuw de zin:
+\[
+\text{All musicians love a song.}
+\]
+
+\subsection*{4a. Is this sentence ambiguous?}
+
+Ja, deze zin is ambigu. De ambigu\"{i}teit is geen syntactische ambigu\"{i}teit: de syntactische structuur kan hetzelfde blijven. Het is een semantische ambigu\"{i}teit, specifieker \emph{quantifier scope ambiguity}.
+
+De zin bevat twee kwantoren: \emph{all musicians} geeft een universele kwantor \(\forall\), en \emph{a song} geeft een existenti\"{e}le kwantor \(\exists\). De ambigu\"{i}teit gaat over welke kwantor de grootste scope heeft.
+
+\subsection*{4b. Possible predicate logic formulae}
+
+\subsubsection*{Reading 1: universal wide scope}
+
+Iedere muzikant houdt van een liedje. Het liedje mag per muzikant verschillen.
+
+\[
+\boxed{
+\forall x\bigl(Musician(x) \rightarrow \exists y(Song(y) \land Love(x,y))\bigr)
+}
+\]
+
+\subsubsection*{Reading 2: existential wide scope}
+
+Er is \'{e}\'{e}n specifiek liedje waar alle muzikanten van houden.
+
+\[
+\boxed{
+\exists y\bigl(Song(y) \land \forall x(Musician(x) \rightarrow Love(x,y))\bigr)
+}
+\]
+
+\newpage
+
+\section*{Eindoverzicht}
+
+\subsection*{Exercise 1}
+
+\[
+\begin{array}{ll}
+(a) & \exists x\bigl(Butterfly(x) \land Love(s,x) \land Love(x,s)\bigr)\\[0.8em]
+(b) & \exists x\bigl(Person(x) \land Like(s,x)\bigr) \land
+      \exists y\bigl(Person(y) \land Like(y,j)\bigr)\\[0.8em]
+(c) & \neg \exists x\bigl(Person(x) \land Greet(x,m)\bigr)\\[0.8em]
+(d) & \neg \exists x\bigl(Person(x) \land (Cough(x) \lor Sneeze(x))\bigr)\\[0.8em]
+(e) & \exists x\bigl(Person(x) \land Cough(x) \land Sneeze(x)\bigr)\\[0.8em]
+(f) & \exists x\Bigl(Butterfly(x) \land Swim(x) \land
+      \forall y\bigl((Butterfly(y) \land Swim(y)) \rightarrow y=x\bigr)\Bigr)
+\end{array}
+\]
+
+\subsection*{Exercise 2}
+
+\[
+\begin{aligned}
+1.\quad
+&\exists e_1 \exists e_2 \exists x \exists y
+\exists t_1 \exists t_2 \exists t_3 \exists t_4\bigl[\\
+&Coffee(x) \land ShootingStar(y)
+\land Making(e_1) \land Agent(alice,e_1) \land Result(x,e_1)\\
+&\land Seeing(e_2) \land Experiencer(bob,e_2) \land Theme(y,e_2)\\
+&\land Start(t_1,e_1) \land End(t_2,e_1)
+\land Start(t_3,e_2) \land End(t_4,e_2)\\
+&\land t_4 \prec t_1
+\bigr]
+\end{aligned}
+\]
+
+\[
+\begin{aligned}
+2.\quad
+&\exists e_1 \exists e_2 \exists x \exists y
+\exists t_1 \exists t_2 \exists t_3 \exists t_4\bigl[\\
+&Coffee(x) \land ShootingStar(y)
+\land Making(e_1) \land Agent(alice,e_1) \land Result(x,e_1)\\
+&\land Seeing(e_2) \land Experiencer(bob,e_2) \land Theme(y,e_2)\\
+&\land Start(t_1,e_1) \land End(t_2,e_1)
+\land Start(t_3,e_2) \land End(t_4,e_2)\\
+&\land t_2 \prec t_3
+\bigr]
+\end{aligned}
+\]
+
+\subsection*{Exercise 3}
+
+\[
+\text{John plays a song:}\qquad
+\boxed{\exists x(Song(x) \land Play(j,x))}
+\]
+
+\[
+\text{All musicians love a song:}\qquad
+\boxed{\forall x\bigl(Musician(x) \rightarrow \exists y(Song(y) \land Love(x,y))\bigr)}
+\]
+
+\subsection*{Exercise 4}
+
+De zin is ambigu door \emph{quantifier scope ambiguity}.
+
+\[
+\boxed{\forall x\bigl(Musician(x) \rightarrow \exists y(Song(y) \land Love(x,y))\bigr)}
+\]
+
+\[
+\boxed{\exists y\bigl(Song(y) \land \forall x(Musician(x) \rightarrow Love(x,y))\bigr)}
+\]
+
+\end{document}
